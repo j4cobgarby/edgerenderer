@@ -1,8 +1,8 @@
 CXX=g++
 LD=g++
-CFLAGS=-std=c++17
+CFLAGS=-std=c++17 -ffast-math -O3
 LFLAGS=-lsfml-system -lsfml-window -lsfml-graphics
-OBJS=main.o camera.o edge.o
+OBJS=main.o camera.o edge.o model.o
 EXE=rend
 
 all: $(OBJS)

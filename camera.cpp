@@ -17,8 +17,6 @@ void Camera::get_alpha_beta(Eigen::Vector3f vert, float* alpha, float* beta) {
     Eigen::Vector3f delta_a = vert - origin; // Vector from origin to vertex
     Eigen::Vector3f delta_a_std = cob * delta_a; // delta_a with respect to standard axes
     
-    float h_hypot = sqrtf(delta_a_std(0)*delta_a_std(0) + delta_a_std(2)*delta_a_std(2));
-
     *alpha = atanf(delta_a_std(1)/delta_a_std(0));
     *beta = atanf(delta_a_std(2)/delta_a_std(0));
 }
