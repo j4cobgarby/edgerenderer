@@ -4,24 +4,24 @@
 
 #include "camera.hpp"
 
-#define SPEED 0.001
-#define KEYPRESSED(k) sf::Keyboard::isKeyPressed(sf::Keyboard:: k)
+#define SPEED 5
+#define ROT 2.5
+#define KEYPRESSED(k) sf::Keyboard::isKeyPressed(sf::Keyboard::Key::k)
 
 int main() {
     std::vector<Edge> edges;
     edges.push_back(Edge(0, 0, 0, 2, 0, 0));
     edges.push_back(Edge(0, 0, 0, 0, 2, 0));
     edges.push_back(Edge(0, 0, 0, 0, 0, 2));
-
     edges.push_back(Edge(0, 0, 2, 0, 2, 2));
     edges.push_back(Edge(0, 0, 2, 2, 0, 2));
-
     edges.push_back(Edge(2, 0, 0, 2, 2, 0));
     edges.push_back(Edge(2, 0, 0, 2, 0, 2));
-    //edges.push_back(Edge(2, 0, 0, 2, 2, 2));
-
-    Eigen::Vector3f test;
-    test << 0, 0, 0;
+    edges.push_back(Edge(2, 2, 0, 2, 2, 2));
+    edges.push_back(Edge(2, 2, 0, 0, 2, 0));
+    edges.push_back(Edge(2, 0, 2, 2, 2, 2));
+    edges.push_back(Edge(0, 2, 2, 0, 2, 0));
+    edges.push_back(Edge(0, 2, 2, 2, 2, 2));
 
     Eigen::Vector3f origin, forwards, up, right;
     origin <<       -5, 0, 0;
@@ -29,37 +29,39 @@ int main() {
     up <<           0, 1, 0;
     right <<        0, 0, 1;
 
-    Camera cam(origin, forwards, up, right, 1.745329);
+    Camera cam(origin, forwards, up, right, 1.396263);
 
-    sf::RenderWindow win(sf::VideoMode(640, 480), "Window");
+    sf::RenderWindow win(sf::VideoMode(1024, 1024), "Window");
+    sf::Clock delta;
 
     while (win.isOpen()) {
+        float dt = delta.restart().asSeconds();
+
         sf::Event ev;
         while (win.pollEvent(ev)) {
             if (ev.type == sf::Event::Closed) win.close();
         }
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up))
-            cam.translate(SPEED, 0, 0);
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down))
-            cam.translate(-SPEED, 0, 0);
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left))
-            cam.translate(0, 0, -SPEED);
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right))
-            cam.translate(0, 0, SPEED);
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W))
-            cam.translate(0, SPEED, 0);
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
-            cam.translate(0, -SPEED, 0);
-        }
+        if (KEYPRESSED(Up))
+            cam.translate(SPEED * dt, 0, 0);
+        if (KEYPRESSED(Down))
+            cam.translate(-SPEED * dt, 0, 0);
+        if (KEYPRESSED(Left))
+            cam.translate(0, 0, -SPEED * dt);
+        if (KEYPRESSED(Right))
+            cam.translate(0, 0, SPEED * dt);
+        if (KEYPRESSED(W))
+            cam.translate(0, SPEED * dt, 0);
+        if (KEYPRESSED(S))
+            cam.translate(0, -SPEED * dt, 0);
+
+        if (KEYPRESSED(G))
+            cam.rotate(0, ROT * dt, 0);
+        if(KEYPRESSED(J))
+            cam.rotate(0, -ROT * dt, 0);
 
         cam.render(&win, edges);
         win.display();
-
-        float a, b;
-        cam.get_alpha_beta(test, &a, &b);
-        std::cout << "cam: " << cam.get_origin() << std::endl;
-        std::cout << "a: " <<  a << " b: " << b << std::endl;
     }
 
 }

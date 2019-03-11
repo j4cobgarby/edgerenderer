@@ -20,17 +20,16 @@ private:
     float fov; // The field of view on the X-axis, in radians
 
     float angle_between(Eigen::Vector3f v1, Eigen::Vector3f v2); // Angle in radians between two vectors
-    
+    void get_alpha_beta(Eigen::Vector3f vert, float* alpha, float* beta);
 public:
     Camera(Eigen::Vector3f origin, Eigen::Vector3f forwards, Eigen::Vector3f up, Eigen::Vector3f right, float fov);
 
     void render(sf::RenderTarget* target, std::vector<Edge> edges);
+
     void translate(Eigen::Vector3f delta);
     void translate(float x, float y, float z);
 
-    void get_alpha_beta(Eigen::Vector3f vert, float* alpha, float* beta);
-
-    Eigen::Vector3f get_origin() {return origin;}
+    void rotate(float x, float y, float z);
 };
 
 #endif

@@ -16,22 +16,11 @@ void Camera::get_alpha_beta(Eigen::Vector3f vert, float* alpha, float* beta) {
 
     Eigen::Vector3f delta_a = vert - origin; // Vector from origin to vertex
     Eigen::Vector3f delta_a_std = cob * delta_a; // delta_a with respect to standard axes
-
-    //std::cout << "\n\n" << delta_a << std::endl << delta_a_std << std::endl;
     
-    Eigen::Vector3f flat_delta_a; // A vector equal to `delta_a_std` except y component=0
-    flat_delta_a(0) = delta_a_std(0);
-    flat_delta_a(1) = 0;
-    flat_delta_a(2) = delta_a_std(2);
+    float h_hypot = sqrtf(delta_a_std(0)*delta_a_std(0) + delta_a_std(2)*delta_a_std(2));
 
-    Eigen::Vector3f x_axis; // A vector representing the x-axis
-    x_axis(0) = 1;
-    x_axis(1) = 0;
-    x_axis(2) = 0;
-
-    *alpha = angle_between(delta_a, flat_delta_a);
-    *beta  = angle_between(x_axis, flat_delta_a);
-    //std::cout << cob << std::endl;
+    *alpha = atanf(delta_a_std(1)/delta_a_std(0));
+    *beta = atanf(delta_a_std(2)/delta_a_std(0));
 }
 
 void Camera::render(sf::RenderTarget* target, std::vector<Edge> edges) {
@@ -68,6 +57,26 @@ void Camera::translate(float x, float y, float z) {
     origin(0) += x;
     origin(1) += y;
     origin(2) += z;
+}
 
-    //std::cout << origin << std::endl;
+void Camera::rotate(float x, float y, float z) {
+    Eigen::Matrix3f R_x, R_y, R_z, R;
+
+    R_x <<  1, 0, 0,
+            0, cosf(x), -sinf(x),
+            0, sinf(x), cosf(x);
+
+    R_y <<  cosf(y), 0, sinf(y),
+            0, 1, 0,
+            -sinf(y), 0, cosf(y);
+
+    R_z <<  cosf(z), -sinf(z), 0,
+            sinf(z), cosf(z), 0,
+            0, 0, 1;
+
+    R = R_z * R_y * R_x;
+
+    forwards = R * forwards;
+    up = R * up;
+    right = R * right;
 }
