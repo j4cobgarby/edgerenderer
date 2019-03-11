@@ -12,10 +12,12 @@ void Camera::get_alpha_beta(Eigen::Vector3f vert, float* alpha, float* beta) {
     cob.col(0) = forwards;
     cob.col(1) = up;
     cob.col(2) = right;
-    //cob = cob.inverse().eval();
+    cob = cob.inverse().eval();
 
     Eigen::Vector3f delta_a = vert - origin; // Vector from origin to vertex
     Eigen::Vector3f delta_a_std = cob * delta_a; // delta_a with respect to standard axes
+
+    //std::cout << "\n\n" << delta_a << std::endl << delta_a_std << std::endl;
     
     Eigen::Vector3f flat_delta_a; // A vector equal to `delta_a_std` except y component=0
     flat_delta_a(0) = delta_a_std(0);
@@ -29,6 +31,7 @@ void Camera::get_alpha_beta(Eigen::Vector3f vert, float* alpha, float* beta) {
 
     *alpha = angle_between(delta_a, flat_delta_a);
     *beta  = angle_between(x_axis, flat_delta_a);
+    //std::cout << cob << std::endl;
 }
 
 void Camera::render(sf::RenderTarget* target, std::vector<Edge> edges) {

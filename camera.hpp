@@ -29,6 +29,8 @@ public:
     void translate(float x, float y, float z);
 
     void get_alpha_beta(Eigen::Vector3f vert, float* alpha, float* beta);
+
+    Eigen::Vector3f get_origin() {return origin;}
 };
 
 #endif

@@ -4,7 +4,7 @@
 
 #include "camera.hpp"
 
-#define SPEED 0.0001
+#define SPEED 0.001
 #define KEYPRESSED(k) sf::Keyboard::isKeyPressed(sf::Keyboard:: k)
 
 int main() {
@@ -21,10 +21,10 @@ int main() {
     //edges.push_back(Edge(2, 0, 0, 2, 2, 2));
 
     Eigen::Vector3f test;
-    test << 2, 0, 0;
+    test << 0, 0, 0;
 
     Eigen::Vector3f origin, forwards, up, right;
-    origin <<       0, 0, 0;
+    origin <<       -5, 0, 0;
     forwards <<     1, 0, 0;
     up <<           0, 1, 0;
     right <<        0, 0, 1;
@@ -47,13 +47,19 @@ int main() {
             cam.translate(0, 0, -SPEED);
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right))
             cam.translate(0, 0, SPEED);
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W))
+            cam.translate(0, SPEED, 0);
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
+            cam.translate(0, -SPEED, 0);
+        }
 
         cam.render(&win, edges);
         win.display();
 
         float a, b;
         cam.get_alpha_beta(test, &a, &b);
-        std::cout << a << " " << b << std::endl;
+        std::cout << "cam: " << cam.get_origin() << std::endl;
+        std::cout << "a: " <<  a << " b: " << b << std::endl;
     }
 
 }
