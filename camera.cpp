@@ -80,3 +80,7 @@ void Camera::rotate(float x, float y, float z) {
     up = R * up;
     right = R * right;
 }
+
+void Camera::translate_along_direction(float x, float y, float z) {
+    translate(x*forwards + y*up + z*right);
+}

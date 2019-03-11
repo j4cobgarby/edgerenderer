@@ -24,7 +24,7 @@ int main() {
     edges.push_back(Edge(0, 2, 2, 2, 2, 2));
 
     Eigen::Vector3f origin, forwards, up, right;
-    origin <<       -5, 0, 0;
+    origin <<       -5, 0.5, 0;
     forwards <<     1, 0, 0;
     up <<           0, 1, 0;
     right <<        0, 0, 1;
@@ -37,11 +37,13 @@ int main() {
     while (win.isOpen()) {
         float dt = delta.restart().asSeconds();
 
+        win.setTitle(std::to_string(1/dt));
+
         sf::Event ev;
         while (win.pollEvent(ev)) {
             if (ev.type == sf::Event::Closed) win.close();
         }
-
+/*
         if (KEYPRESSED(Up))
             cam.translate(SPEED * dt, 0, 0);
         if (KEYPRESSED(Down))
@@ -53,11 +55,21 @@ int main() {
         if (KEYPRESSED(W))
             cam.translate(0, SPEED * dt, 0);
         if (KEYPRESSED(S))
-            cam.translate(0, -SPEED * dt, 0);
+            cam.translate(0, -SPEED * dt, 0);*/
 
-        if (KEYPRESSED(G))
+        if (KEYPRESSED(W))
+            cam.translate_along_direction(SPEED * dt, 0, 0);
+        if (KEYPRESSED(S))
+            cam.translate_along_direction(-SPEED * dt, 0, 0);
+        if (KEYPRESSED(A))
+            cam.translate_along_direction(0, 0, -SPEED * dt);
+        if (KEYPRESSED(D)) {
+            cam.translate_along_direction(0, 0, SPEED * dt);
+        }
+
+        if (KEYPRESSED(Left))
             cam.rotate(0, ROT * dt, 0);
-        if(KEYPRESSED(J))
+        if(KEYPRESSED(Right))
             cam.rotate(0, -ROT * dt, 0);
 
         cam.render(&win, edges);

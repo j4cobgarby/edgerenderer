@@ -1,6 +1,6 @@
 CXX=g++
 LD=g++
-CFLAGS=-g -std=c++17
+CFLAGS=-std=c++17
 LFLAGS=-lsfml-system -lsfml-window -lsfml-graphics
 OBJS=main.o camera.o edge.o
 EXE=rend

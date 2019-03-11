@@ -29,6 +29,8 @@ public:
     void translate(Eigen::Vector3f delta);
     void translate(float x, float y, float z);
 
+    void translate_along_direction(float x, float y, float z);
+
     void rotate(float x, float y, float z);
 };
 
