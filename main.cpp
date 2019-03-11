@@ -10,7 +10,8 @@
 #define KEYPRESSED(k) sf::Keyboard::isKeyPressed(sf::Keyboard::Key::k)
 
 int main() {
-    Model suz("objs/pot.obj");
+    std::string objpath("objs/pot.obj");
+    Model suz(objpath);
 
     Eigen::Vector3f origin, forwards, up, right;
     origin <<       -5, 1, 0;

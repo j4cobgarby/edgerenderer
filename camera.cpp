@@ -1,21 +1,25 @@
 #include "camera.hpp"
 
 Camera::Camera(Eigen::Vector3f origin, Eigen::Vector3f forwards, Eigen::Vector3f up, Eigen::Vector3f right, float fov) :
-origin(origin), forwards(forwards), up(up), right(right), fov(fov) {}
+origin(origin), forwards(forwards), up(up), right(right), fov(fov) {
+    update_cob();
+}
+
+void Camera::update_cob() {
+    cob_cam_2_world.col(0) = forwards;
+    cob_cam_2_world.col(1) = up;
+    cob_cam_2_world.col(2) = right;
+
+    cob_world_2_cam = cob_cam_2_world.inverse().eval();
+}
 
 float Camera::angle_between(Eigen::Vector3f v1, Eigen::Vector3f v2) {
     return acos(std::clamp(v1.normalized().dot(v2.normalized()), -1.f, 1.f));
 }
 
 void Camera::get_alpha_beta(Eigen::Vector3f vert, float* alpha, float* beta) {
-    Eigen::Matrix3f cob; // Change-of-base matrix
-    cob.col(0) = forwards;
-    cob.col(1) = up;
-    cob.col(2) = right;
-    cob = cob.inverse().eval();
-
     Eigen::Vector3f delta_a = vert - origin; // Vector from origin to vertex
-    Eigen::Vector3f delta_a_std = cob * delta_a; // delta_a with respect to standard axes
+    Eigen::Vector3f delta_a_std = cob_world_2_cam * delta_a; // delta_a with respect to standard axes
     
     *alpha = atanf(delta_a_std(1)/delta_a_std(0));
     *beta = atanf(delta_a_std(2)/delta_a_std(0));
@@ -49,12 +53,14 @@ void Camera::render(sf::RenderTarget* target, std::vector<Edge> edges) {
 
 void Camera::translate(Eigen::Vector3f delta) {
     origin += delta;
+    update_cob();
 }
 
 void Camera::translate(float x, float y, float z) {
     origin(0) += x;
     origin(1) += y;
     origin(2) += z;
+    update_cob();
 }
 
 void Camera::rotate(float x, float y, float z) {
@@ -77,6 +83,8 @@ void Camera::rotate(float x, float y, float z) {
     forwards = R * forwards;
     up = R * up;
     right = R * right;
+
+    update_cob();
 }
 
 void Camera::translate_along_direction(float x, float y, float z) {

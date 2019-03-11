@@ -17,10 +17,13 @@ private:
     Eigen::Vector3f origin; // The origin position of the camera
     Eigen::Vector3f forwards, up, right; // Normalised direction vectors representing the
                                       // orientation of the camera
+    Eigen::Matrix3f cob_world_2_cam, cob_cam_2_world;
+
     float fov; // The field of view on the X-axis, in radians
 
     float angle_between(Eigen::Vector3f v1, Eigen::Vector3f v2); // Angle in radians between two vectors
     void get_alpha_beta(Eigen::Vector3f vert, float* alpha, float* beta);
+    void update_cob();
 public:
     Camera(Eigen::Vector3f origin, Eigen::Vector3f forwards, Eigen::Vector3f up, Eigen::Vector3f right, float fov);
 
