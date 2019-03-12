@@ -45,7 +45,7 @@ void Camera::render(sf::RenderTarget* target, std::vector<Edge> edges) {
 
         lines[e].position = px_a;
         lines[e+1].position = px_b;
-        lines[e].color = lines[e+1].color = sf::Color::White;
+        lines[e].color = lines[e+1].color = sf::Color::Red;
     }
 
     target->draw(lines);
