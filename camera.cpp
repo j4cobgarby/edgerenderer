@@ -17,38 +17,63 @@ float Camera::angle_between(Eigen::Vector3f v1, Eigen::Vector3f v2) {
     return acos(std::clamp(v1.normalized().dot(v2.normalized()), -1.f, 1.f));
 }
 
-void Camera::get_alpha_beta(Eigen::Vector3f vert, float* alpha, float* beta) {
+bool Camera::get_alpha_beta(Eigen::Vector3f vert, float* alpha, float* beta) {
     Eigen::Vector3f delta_a = vert - origin; // Vector from origin to vertex
     Eigen::Vector3f delta_a_std = cob_world_2_cam * delta_a; // delta_a with respect to standard axes
     
     *alpha = atanf(delta_a_std(1)/delta_a_std(0));
     *beta = atanf(delta_a_std(2)/delta_a_std(0));
+
+    return fabs(*alpha) > fov/2 || fabs(*beta) > fov/2 || delta_a_std(0) < 0;
 }
 
-void Camera::render(sf::RenderTarget* target, std::vector<Edge> edges) {
+void Camera::render(sf::RenderTarget* target, Model& model) {
     target->clear(sf::Color::Black); // Fill background
-    sf::VertexArray lines(sf::Lines, edges.size() * 2);
+    sf::VertexArray lines(sf::Lines, model.get_edges().size() * 2);
+    sf::VertexArray face_vertices(sf::Triangles, model.get_faces().size() * 3);
 
-    size_t e = 0; // Edge number
-    for (auto it = edges.begin(); it != edges.end(); it++, e+=2) {
-        float alpha_a, beta_a, 
-                alpha_b, beta_b;
-        get_alpha_beta(it->a, &alpha_a, &beta_a);
-        get_alpha_beta(it->b, &alpha_b, &beta_b);
+    sf::VertexArray point_pixels(sf::Points, model.get_points().size());
+    std::vector<bool> visibilities;
 
-        sf::Vector2f px_a, px_b;
-        px_a.x = (target->getSize().x / 2) * (beta_a / (fov/2)) + (target->getSize().x / 2);
-        px_a.y = (target->getSize().y / 2) - ((target->getSize().x / 2) * (alpha_a / (fov/2)));
+    size_t p = 0;
+    for (auto it = model.get_points().begin(); it != model.get_points().end(); it++, p++) {
+        float alpha, beta;
+        bool behind_cam;
 
-        px_b.x = (target->getSize().x / 2) * (beta_b / (fov/2)) + (target->getSize().x / 2);
-        px_b.y = (target->getSize().y / 2) - ((target->getSize().x / 2) * (alpha_b / (fov/2)));
+        behind_cam = get_alpha_beta(*it, &alpha, &beta);
+        visibilities.push_back(!behind_cam);
+        
+        sf::Vector2f px(
+            (target->getSize().x / 2) * (beta / (fov/2)) + (target->getSize().x / 2),
+            (target->getSize().y / 2) - ((target->getSize().x / 2) * (alpha / (fov/2)))
+        );
 
-        lines[e].position = px_a;
-        lines[e+1].position = px_b;
+        point_pixels[p].position = px;
+        point_pixels[p].color = sf::Color::Blue;
+    }
+
+    size_t e = 0;
+    for (auto it = model.get_edges().begin(); it != model.get_edges().end(); it++, e+=2) {
+        if (!visibilities.at(it->ai) && !visibilities.at(it->bi)) continue; // Pass if both vertices aren't visible
+
+        lines[e].position = point_pixels[it->ai].position;
+        lines[e+1].position = point_pixels[it->bi].position;
         lines[e].color = lines[e+1].color = sf::Color::Red;
     }
 
+    size_t f = 0;
+    for (auto it = model.get_faces().begin(); it != model.get_faces().end(); it++, f+=3) {
+        if (!visibilities.at(it->p1i) && !visibilities.at(it->p2i) && !visibilities.at(it->p3i)) continue;
+
+        face_vertices[f].position = point_pixels[it->p1i].position;
+        face_vertices[f+1].position = point_pixels[it->p2i].position;
+        face_vertices[f+2].position = point_pixels[it->p3i].position;
+
+        face_vertices[f].color = face_vertices[f+1].color = face_vertices[f+2].color = sf::Color(0xffffff44);
+    }
+
     target->draw(lines);
+    //target->draw(face_vertices);
 }
 
 void Camera::translate(Eigen::Vector3f delta) {

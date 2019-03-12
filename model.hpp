@@ -7,16 +7,19 @@
 #include <vector>
 
 #include "edge.hpp"
+#include "face.hpp"
 
 class Model {
 protected:
     std::vector<Eigen::Vector3f> points;
     std::vector<Edge> edges;
-    std::vector<std::vector<Eigen::Vector3f*>> faces; // A vector of ({vectors of vertex pointers} == faces)
+    std::vector<TriFace> faces;
 public:
     Model(std::string obj_filename);
 
+    std::vector<Eigen::Vector3f>& get_points() {return points;}
     std::vector<Edge>& get_edges() {return edges;}
+    std::vector<TriFace>& get_faces() {return faces;}
 };
 
 #endif

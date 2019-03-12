@@ -49,7 +49,21 @@ Model::Model(std::string obj_filename) {
             }
 
             for (int i = 0; i < vert_indices.size() - 1; i++) { // Iterate all elements except the last, since I'm getting pairs
-                edges.push_back(Edge(points.at(vert_indices.at(i)-1), points.at(vert_indices.at(i+1)-1)));
+                edges.push_back(
+                    Edge(points.at(vert_indices.at(i)-1), points.at(vert_indices.at(i+1)-1),
+                    vert_indices.at(i)-1, vert_indices.at(i+1)-1)
+                );
+            }
+
+            if (vert_indices.size() == 3) { // Only draw triangular faces
+                faces.push_back(TriFace(
+                    &points.at(vert_indices.at(0)-1),
+                    &points.at(vert_indices.at(1)-1),
+                    &points.at(vert_indices.at(2)-1),
+                    vert_indices.at(0)-1,
+                    vert_indices.at(1)-1,
+                    vert_indices.at(2)-2
+                ));
             }
         }
     }

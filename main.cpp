@@ -21,7 +21,7 @@ int main() {
 
     Camera cam(origin, forwards, up, right, 1.396263);
 
-    sf::RenderWindow win(sf::VideoMode(1024, 1024), "Window");
+    sf::RenderWindow win(sf::VideoMode(800, 800), "Window");
     sf::Clock delta;
 
     while (win.isOpen()) {
@@ -49,7 +49,7 @@ int main() {
         if(KEYPRESSED(Right))
             cam.rotate(0, -ROT * dt, 0);
 
-        cam.render(&win, suz.get_edges());
+        cam.render(&win, suz);
         win.display();
     }
 
