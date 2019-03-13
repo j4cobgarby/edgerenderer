@@ -22,6 +22,7 @@ private:
     Eigen::Matrix3f cob_world_2_cam, cob_cam_2_world;
 
     float fov; // The field of view on the X-axis, in radians
+    float fov_2; // Half of the fov, to save calculation time
 
     float angle_between(Eigen::Vector3f v1, Eigen::Vector3f v2); // Angle in radians between two vectors
     bool get_alpha_beta(Eigen::Vector3f vert, float* alpha, float* beta);

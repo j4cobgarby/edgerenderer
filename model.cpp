@@ -62,7 +62,7 @@ Model::Model(std::string obj_filename) {
                     &points.at(vert_indices.at(2)-1),
                     vert_indices.at(0)-1,
                     vert_indices.at(1)-1,
-                    vert_indices.at(2)-2
+                    vert_indices.at(2)-1
                 ));
             }
         }

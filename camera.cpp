@@ -49,7 +49,7 @@ void Camera::render(sf::RenderTarget* target, Model& model) {
         );
 
         point_pixels[p].position = px;
-        point_pixels[p].color = sf::Color::Blue;
+        point_pixels[p].color = sf::Color::White;
     }
 
     size_t e = 0;
@@ -58,22 +58,22 @@ void Camera::render(sf::RenderTarget* target, Model& model) {
 
         lines[e].position = point_pixels[it->ai].position;
         lines[e+1].position = point_pixels[it->bi].position;
-        lines[e].color = lines[e+1].color = sf::Color::Red;
+        lines[e].color = lines[e+1].color = sf::Color(0xff000070);
     }
 
     size_t f = 0;
     for (auto it = model.get_faces().begin(); it != model.get_faces().end(); it++, f+=3) {
         if (!visibilities.at(it->p1i) && !visibilities.at(it->p2i) && !visibilities.at(it->p3i)) continue;
 
-        face_vertices[f].position = point_pixels[it->p1i].position;
+        face_vertices[f].position   = point_pixels[it->p1i].position;
         face_vertices[f+1].position = point_pixels[it->p2i].position;
         face_vertices[f+2].position = point_pixels[it->p3i].position;
 
-        face_vertices[f].color = face_vertices[f+1].color = face_vertices[f+2].color = sf::Color(0xffffff44);
+        face_vertices[f].color = face_vertices[f+1].color = face_vertices[f+2].color = sf::Color(0xffffffff);
     }
 
+    target->draw(face_vertices);
     target->draw(lines);
-    //target->draw(face_vertices);
 }
 
 void Camera::translate(Eigen::Vector3f delta) {

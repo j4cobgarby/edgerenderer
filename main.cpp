@@ -5,23 +5,24 @@
 #include "camera.hpp"
 #include "model.hpp"
 
-#define SPEED 5
+#define SPEED 7
 #define ROT 2.5
 #define KEYPRESSED(k) sf::Keyboard::isKeyPressed(sf::Keyboard::Key::k)
 
 int main() {
-    std::string objpath("objs/pot.obj");
+    std::string objpath("objs/knot.obj");
     Model suz(objpath);
 
     Eigen::Vector3f origin, forwards, up, right;
-    origin <<       -5, 1, 0;
+    origin <<       -5, 0.5, 0;
     forwards <<     1, 0, 0;
     up <<           0, 1, 0;
     right <<        0, 0, 1;
 
     Camera cam(origin, forwards, up, right, 1.396263);
 
-    sf::RenderWindow win(sf::VideoMode(800, 800), "Window");
+    sf::RenderWindow win(sf::VideoMode(800, 800), "Renderer");
+    win.setVerticalSyncEnabled(true);
     sf::Clock delta;
 
     while (win.isOpen()) {
